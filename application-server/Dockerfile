@@ -1,0 +1,45 @@
+FROM ubuntu:xenial
+LABEL maintainer="Hitesh Prabhakar <HP41@github>"
+LABEL description="PaperCut MF Application Server"
+
+ENV PAPERCUT_MAJOR_VER 17.x
+ENV PAPERCUT_VER 17.2.3
+ENV PAPERCUT_DOWNLOAD_URL https://cdn.papercut.com/files/mf/${PAPERCUT_MAJOR_VER}/pcmf-setup-${PAPERCUT_VER}-linux-x64.sh
+
+COPY entrypoint.sh /
+
+RUN \
+# Creating 'papercut' user
+    useradd -mUd /papercut -s /bin/bash papercut && \
+    chmod +x /entrypoint.sh && \
+
+# Installing necessary pacakges and cleaning up
+    apt-get update && \
+    apt-get install -y \
+                    curl \
+                    cpio && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+
+# Installing dumb-init to solive PID issue
+    curl -L "https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64.deb" -o /dumb-init.deb && \
+    dpkg -i dumb-init.deb && \
+    rm -rf dumb-init.deb && \
+
+# Downloading Papercut and ensuring it's executable
+    curl -L "${PAPERCUT_DOWNLOAD_URL}" -o /pcmf-setup.sh && \
+    chmod a+rx /pcmf-setup.sh && \
+
+# Running the installer as papercut user and running root tasks as root user
+    runuser -l papercut -c "/pcmf-setup.sh --non-interactive" && \
+    rm -f /pcmf-setup.sh && \
+    /papercut/MUST-RUN-AS-ROOT && \
+
+# Stopping Papercut services before capturing image
+    /etc/init.d/papercut stop && \
+    /etc/init.d/papercut-web-print stop
+
+VOLUME /papercut
+EXPOSE 9191 9192 9193
+
+ENTRYPOINT ["/usr/bin/dumb-init", "--", "/entrypoint.sh"]

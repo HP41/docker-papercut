@@ -1,0 +1,25 @@
+version: '2'
+services:
+  pc-app:
+    image: test/pc-app
+    hostname: pc-app
+    ports:
+      - 9191:9191
+      - 9193:9193
+    volumes:
+      - ./pc-app/server.properties:/papercut/server/server.properties
+      # - ./pc-app/logs:/papercut/server/logs
+      # - ./pc-app/backups:/papercut/server/data/backups
+      # - ./pc-app/conf:/papercut/server/data/conf
+  pc-cups:
+    image: test/pc-cups
+    hostname: pc-cups
+    environment:
+      CUPS_ADMIN_PWD: test12345
+    depends_on:
+      - pc-app
+    ports:
+      - 631:631
+    volumes:
+      - ./pc-cups/print-provider.conf:/papercut/providers/print/linux-x64/print-provider.conf
+      - ./pc-cups/cupsd.conf:/etc/cups/cupsd.conf
