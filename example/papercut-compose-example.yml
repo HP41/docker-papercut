@@ -1,7 +1,7 @@
 version: '2'
 services:
   pc-app:
-    image: test/pc-app
+    image: hp41/papercut-mf
     hostname: pc-app
     ports:
       - 9191:9191
@@ -12,7 +12,7 @@ services:
       # - ./pc-app/backups:/papercut/server/data/backups
       # - ./pc-app/conf:/papercut/server/data/conf
   pc-cups:
-    image: test/pc-cups
+    image: hp41/papercut-cups
     hostname: pc-cups
     environment:
       CUPS_ADMIN_PWD: test12345
