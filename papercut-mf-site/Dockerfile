@@ -33,11 +33,12 @@ RUN \
 # Running the installer as papercut user and running root tasks as root user
     runuser -l papercut -c "/pcmf-setup.sh --site-server --non-interactive" && \
     rm -f /pcmf-setup.sh && \
-    /papercut/MUST-RUN-AS-ROOT && \
+# This command fails if cups isn't installed though a print provider isn't needed on the same machine 
+# for the functioning of site-server as mentioned here: https://www.papercut.com/products/ng/manual/common/topics/site-server-technical-overview.html
+    /papercut/MUST-RUN-AS-ROOT || true && \
 
 # Stopping Papercut services before capturing image
-    /etc/init.d/papercut stop && \
-    /etc/init.d/papercut-web-print stop
+    /etc/init.d/papercut stop
 
 VOLUME /papercut/server/logs /papercut/server/data/backups /papercut/server/data/conf /papercut/server/data/internal
 EXPOSE 9191 9192 9193
