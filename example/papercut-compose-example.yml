@@ -7,7 +7,7 @@ services:
       - 9191:9191
       - 9193:9193
     volumes:
-      - ./pc-app/server.properties:/papercut/server/server.properties
+      # - ./pc-app/server.properties:/papercut/server/server.properties
       # - ./pc-app/logs:/papercut/server/logs
       # - ./pc-app/backups:/papercut/server/data/backups
       # - ./pc-app/conf:/papercut/server/data/conf
@@ -23,3 +23,16 @@ services:
     volumes:
       - ./pc-cups/print-provider.conf:/papercut/providers/print/linux-x64/print-provider.conf
       - ./pc-cups/cupsd.conf:/etc/cups/cupsd.conf
+  pc-site:
+    image: hp41/papercut-mf-site
+    hostname: pc-site
+    depends_on:
+      - pc-app
+    ports:
+      - 9191:9191
+      - 9193:9193
+    volumes:
+      # - ./pc-site/server.properties:/papercut/server/server.properties
+      # - ./pc-site/logs:/papercut/server/logs
+      # - ./pc-site/backups:/papercut/server/data/backups
+      # - ./pc-site/conf:/papercut/server/data/conf

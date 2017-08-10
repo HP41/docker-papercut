@@ -66,7 +66,7 @@ RUN \
     /etc/init.d/papercut-event-monitor stop && \
     /etc/init.d/cups stop
 
-VOLUME /papercut /etc/cups /var/log/cups /var/spool/cups
+VOLUME /papercut /opt/share/ppd /etc/cups /var/log/cups /var/spool/cups
 EXPOSE 631
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--", "/entrypoint.sh"]

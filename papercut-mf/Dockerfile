@@ -39,7 +39,7 @@ RUN \
     /etc/init.d/papercut stop && \
     /etc/init.d/papercut-web-print stop
 
-VOLUME /papercut
+VOLUME /papercut/server/server.properties /papercut/server/logs /papercut/server/data/backups /papercut/server/data/conf /papercut/server/data/internal
 EXPOSE 9191 9192 9193
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--", "/entrypoint.sh"]

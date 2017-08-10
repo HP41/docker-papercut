@@ -3,7 +3,6 @@
 CUPS_ADMIN_USN=${CUPS_ADMIN_USN:-"cups_admin"}
 
 id ${CUPS_ADMIN_USN}
-
 if [[ $? == 1 ]]; then 
     echo "${CUPS_ADMIN_USN} isn't present, Creating ${CUPS_ADMIN_USN}..."
 
@@ -13,9 +12,9 @@ if [[ $? == 1 ]]; then
     fi
 
     useradd -U \
-        -md /home/${CUPS_ADMIN_USN} \
-        -p $(openssl passwd -1 ${CUPS_ADMIN_PWD}) \
-        ${CUPS_ADMIN_USN}
+            -md /home/${CUPS_ADMIN_USN} \
+            -p $(openssl passwd -1 ${CUPS_ADMIN_PWD}) \
+            ${CUPS_ADMIN_USN}
 fi
 
 usermod -aG lpadmin ${CUPS_ADMIN_USN}
