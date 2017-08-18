@@ -1,0 +1,27 @@
+---
+- hosts: localhost
+  tasks:
+    - name: Check if printer_list.yml is defined
+      stat:
+        path: "group_vars/printer_list.yml"
+      register: printer_list_defined
+    - name: Check if class_list.yml is defined
+      stat:
+        path: "group_vars/class_list.yml"
+      register: class_list_defined
+
+    - name: Including printer list vars if defined
+      include_vars:
+        file: "group_vars/printer_list.yml"
+      when: printer_list_defined.stat.exists
+    - name: Including class list if defined
+      include_vars:
+        file: "group_vars/class_list.yml"
+      when: class_list_defined.stat.exists
+
+    - include_role:
+        name: HP41.cups
+        tasks_from: printer_and_class_install.yml
+      vars:
+        cups_printer_list: "{{printer_list | default(omit)}}"
+        cups_class_list: "{{class_list | default(omit)}}"

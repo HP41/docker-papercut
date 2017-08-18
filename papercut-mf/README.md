@@ -14,7 +14,7 @@
 - `papercut` service is run as console therefore it ouputs to stdout.
 - `/papercut/server/server/data/internal` - This is where the internal database is stored.
     - If mounted on host, the database initialized by the installation during image capture will be overwritten.
-    - `entrypoint.sh` will automatically initialize the databse in this case if `/papercut/server/server/data/internal/derby` is missing.
+    - `entrypoint.sh` will automatically initialize the database in this case if `/papercut/server/server/data/internal/derby` is missing.
 
 -------
 
@@ -29,8 +29,8 @@
 
 -------
 
+## docker run example
 ```bash
-# docker run example
 docker run -d \
     -p 9191:9191 \
     -p 9192:9193 \

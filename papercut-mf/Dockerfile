@@ -21,11 +21,6 @@ RUN \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
 
-# Installing dumb-init to solive PID issue
-    curl -L "https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64.deb" -o /dumb-init.deb && \
-    dpkg -i dumb-init.deb && \
-    rm -rf dumb-init.deb && \
-
 # Downloading Papercut and ensuring it's executable
     curl -L "${PAPERCUT_DOWNLOAD_URL}" -o /pcmf-setup.sh && \
     chmod a+rx /pcmf-setup.sh && \
@@ -42,4 +37,4 @@ RUN \
 VOLUME /papercut/server/logs /papercut/server/data/backups /papercut/server/data/conf /papercut/server/data/internal
 EXPOSE 9191 9192 9193
 
-ENTRYPOINT ["/usr/bin/dumb-init", "--", "/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

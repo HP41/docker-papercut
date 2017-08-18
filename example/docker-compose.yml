@@ -1,37 +1,46 @@
-version: '2'
+version: '2.2'
 services:
   pc-app:
+    # build: ../papercut-mf
     image: hp41/papercut-mf
+    init: true
     hostname: pc-app
     ports:
       - 9191:9191
       - 9193:9193
-    volumes:
+    # volumes:
       # - ./pc-app/server.properties:/papercut/server/server.properties
       # - ./pc-app/logs:/papercut/server/logs
       # - ./pc-app/backups:/papercut/server/data/backups
       # - ./pc-app/conf:/papercut/server/data/conf
   pc-cups:
-    image: hp41/papercut-cups
+    # build: ../papercut-cups-provider
+    image: hp41/papercut-cups-provider
     hostname: pc-cups
+    init: true
     environment:
       CUPS_ADMIN_PWD: test12345
+      ANSIBLE_MANAGE_PRINTERS: "true"
     depends_on:
       - pc-app
     ports:
-      - 631:631
+      - 640:631
     volumes:
       - ./pc-cups/print-provider.conf:/papercut/providers/print/linux-x64/print-provider.conf
       - ./pc-cups/cupsd.conf:/etc/cups/cupsd.conf
+      - ./pc-cups/printer_list.yml:/install-printers/group_vars/printer_list.yml
+      - ./pc-cups/class_list.yml:/install-printers/group_vars/class_list.yml
   pc-site:
+    # build: ../papercut-mf-site
     image: hp41/papercut-mf-site
     hostname: pc-site
+    init: true
     depends_on:
       - pc-app
     ports:
-      - 9191:9191
-      - 9193:9193
-    volumes:
+      - 9195:9191
+      - 9197:9193
+    # volumes:
       # - ./pc-site/server.properties:/papercut/server/server.properties
       # - ./pc-site/logs:/papercut/server/logs
       # - ./pc-site/backups:/papercut/server/data/backups

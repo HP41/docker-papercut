@@ -1,0 +1,7 @@
+---
+class_list:
+  - name: "TestClass"
+    state: "present"
+    members:
+      - "TestPrinter1"
+      - "TestPrinter2"

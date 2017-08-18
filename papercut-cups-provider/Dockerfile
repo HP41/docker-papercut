@@ -22,9 +22,13 @@ RUN \
                     cups \
                     cups-pdf \
                     hplip \
-                    openprinting-ppds && \
+                    openprinting-ppds \
+                    python \
+                    python-pip \
+                    git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
+    pip install virtualenv && \
 
 # Disable some cups backend that are unusable within a container
     mv /usr/lib/cups/backend/parallel /usr/lib/cups/backend-available/ && \
@@ -33,12 +37,6 @@ RUN \
 # Creating printers.conf otherwise papercut-event-monitor will fail.
     touch /etc/cups/printers.conf && \
     chown -R root:lp /etc/cups && \
-
-# Grabbing dumb-init for a simple init system in container so it doesn't
-# run as PID 1
-    curl -L "https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64.deb" -o /dumb-init.deb && \
-    dpkg -i dumb-init.deb && \
-    rm -rf dumb-init.deb && \
 
 # Creating necessary dirs
     mkdir -p \
@@ -64,9 +62,27 @@ RUN \
     /papercut/providers/print/linux-x64/setperms && \
     /papercut/providers/print/linux-x64/roottasks && \
     /etc/init.d/papercut-event-monitor stop && \
-    /etc/init.d/cups stop
+    /etc/init.d/cups stop && \
+
+# Including the ansible role to install printers specified in a yml file.
+    mkdir -p /install-printers && \
+    git clone https://github.com/HP41/ansible-cups.git /install-printers && \
+    virtualenv -p /usr/bin/python2.7 /install-printers
+
+COPY install-printers/* /install-printers/
+
+# Installing ansible under virtualenv and downloading playbook roles.
+RUN . /install-printers/bin/activate && \
+    pip install ansible && \
+    mkdir -p /install-printers/roles && \
+    ansible-galaxy install \
+        --role-file=/install-printers/requirements.yml \
+        --roles-path=/install-printers/roles/ \
+        --force \
+        --ignore-errors && \
+    deactivate
 
 VOLUME /papercut /opt/share/ppd /etc/cups /var/log/cups /var/spool/cups
 EXPOSE 631
 
-ENTRYPOINT ["/usr/bin/dumb-init", "--", "/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

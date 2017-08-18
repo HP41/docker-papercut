@@ -1,0 +1,10 @@
+---
+printer_list:
+  - name: "TestPrinter1"
+    printer_or_class: "printer"
+    state: "present"
+    uri: "file:///dev/null"
+  - name: "TestPrinter2"
+    printer_or_class: "printer"
+    state: "present"
+    uri: "file:///dev/null"
